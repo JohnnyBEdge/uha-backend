@@ -54,6 +54,29 @@ const deleteEvent = (id) => {
     return promise;
 }
 
+const addEvent = (event) => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(url, settings, async function(err, client){
+            if(err){
+                reject(err);
+            } else {
+                console.log("Successfully connect to DB for POST");
+                const db = client.db(dbName);
+                const collection = db.collection(collectionName);
+                collection.insertOne(event, (err, result)=> {
+                    if(err){
+                        console.log(err)
+                    } else {
+                        resolve(result.ops[0]);
+                        client.close();
+                    }
+                })
+            }
+        })
+    })
+    return promise;
+}
+
 module.exports = {
-    getEvents, deleteEvent
+    getEvents, deleteEvent, addEvent
 }
