@@ -77,6 +77,33 @@ const addEvent = (event) => {
     return promise;
 }
 
+const editEvent = (id, event) => {
+    const promise = new Promise((resolve, reject) =>{
+        MongoClient.connect(url, settings, function(err, client){
+            if(err){
+                reject(err);
+            } else {
+                console.log("Successfully connect to DB for PATCH");
+                const db = client.db(dbName);
+                const collection = db.collection(collectionName);
+                //first arg = query to find, second is data to update
+                collection.updateOne(
+                    {_id: ObjectID(id)}, 
+                    {$set: {...event}},
+                    (err,result) => {
+                        if(err){
+                            reject(err);
+                        } else {
+                            resolve(result);
+                            client.close()
+                        }
+                    })
+            }
+        })
+    })
+    return promise;
+}
+
 module.exports = {
-    getEvents, deleteEvent, addEvent
+    getEvents, deleteEvent, addEvent, editEvent
 }
