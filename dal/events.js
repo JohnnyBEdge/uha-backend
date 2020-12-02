@@ -1,4 +1,59 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
-const url = process.env.DB_API_URL
+const url = process.env.ATLAS_URI;
+const dbName = "uha";
+const collectionName = "events";
+
+// Database settings
+const settings = { useUnifiedTopology: true };
+
+const getEvents = () => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(url, settings, async function(err, client){
+            if(err){
+                reject(err);
+            } else {
+                console.log("Successfully connect to DB for GET");
+                const db = client.db(dbName);
+                const collection = db.collection(collectionName);
+                await collection.find({}).toArray(function(err, docs){
+                    if(err){
+                        reject(err);
+                    } else {
+                        console.log(docs);
+                        resolve(docs);
+                        client.close();
+                    };
+                })
+            };
+        })
+    })
+    return promise;
+};
+const deleteEvent = (id) => {
+    const promise = new Promise((resolve, reject) => {
+        MongoClient.connect(url, settings, async function(err, client){
+            if(err){
+                reject(err)
+            } else {
+                console.log("Successfully connect to DB for DELETE");
+                const db = client.db(dbName);
+                const collection = db.collection(collectionName);
+                await collection.deleteOne({_id: ObjectID(id)}, function(err, result){
+                    if(err){
+                        reject(err);
+                    } else {
+                        resolve(result);
+                        client.close()
+                    }
+                })
+            }
+        })
+    })
+    return promise;
+}
+
+module.exports = {
+    getEvents, deleteEvent
+}

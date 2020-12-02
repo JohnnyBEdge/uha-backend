@@ -1,32 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const {
+  getEvents, deleteEvent
+} = require('../../dal/events');
 
-} = require('../../DAL/events');
-
-/* GET home page. */
+/* GET events. */
 router.get('/', async function(req, res) {
+    try{
+      const data = await getEvents();
+      res.send(data);
+    } catch(err){
+      console.log("ERROR:",err)
+      res.status(500).send("Internal server error; check logs");
+    };
+  });
 
-});
-
-// POST
-router.post('/', async function(req, res){
-
-});
-
-// DELETE
+// DELETE events
 router.delete('/:id', async function(req, res){
-
-});
-
-//PUT
-router.put('/:id', async function(req, res){
-
-});
-
-//PATCH
-router.patch('/:id', async function(req, res){
-
-});
+  try{
+    const data = await deleteEvent(req.params.id);
+    res.send(data)
+  } catch(err){
+    console.log("ERROR:",err);
+    res.status(500).send("Internal server error; check logs");
+  }
+})
 
 module.exports = router;
