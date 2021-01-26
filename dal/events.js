@@ -1,7 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
-const url = process.env.ATLAS_URI;
+const url = process.env.REACT_APP_API_URL;
 const dbName = "uha";
 const collectionName = "events";
 
